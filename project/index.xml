@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Erin Lee</title>
+    <link>/project/</link>
+    <description>Recent content in Projects on Erin Lee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language><atom:link href="/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Project1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Ye Rim Lee ,yl33656  0. Introduction  Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.  # import tidyverse library(tidyverse) # import two datasets and glimpse those six &amp;lt;- read.csv(&amp;quot;/stor/home/yl33656/Police_2016.csv&amp;quot;) glimpse(six) ## Rows: 150,500 ## Columns: 13 ## $ IncidntNum &amp;lt;int&amp;gt; 120058272, 120058272, 141059263, 160013662, 160002740, 160… ## $ Category &amp;lt;fct&amp;gt; WEAPON LAWS, WEAPON LAWS, WARRANTS, NON-CRIMINAL, NON-CRIM… ## $ Descript &amp;lt;fct&amp;gt; &amp;quot;POSS OF PROHIBITED WEAPON&amp;quot;, &amp;quot;FIREARM, LOADED, IN VEHICLE,… ## $ DayOfWeek &amp;lt;fct&amp;gt; Friday, Friday, Monday, Tuesday, Friday, Friday, Saturday,… ## $ Date &amp;lt;fct&amp;gt; 01/29/2016 12:00:00 AM, 01/29/2016 12:00:00 AM, 04/25/2016… ## $ Time &amp;lt;fct&amp;gt; 11:00, 11:00, 14:59, 23:50, 00:30, 21:35, 00:04, 01:02, 12… ## $ PdDistrict &amp;lt;fct&amp;gt; SOUTHERN, SOUTHERN, BAYVIEW, TENDERLOIN, MISSION, NORTHERN… ## $ Resolution &amp;lt;fct&amp;gt; &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;NON… ## $ Address &amp;lt;fct&amp;gt; 800 Block of BRYANT ST, 800 Block of BRYANT ST, KEITH ST /… ## $ X &amp;lt;dbl&amp;gt; -122.</description>
+    </item>
+    
+    <item>
+      <title>Project2</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Ye Rim Lee ,yl33656  0. Introduction  Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?  # import tidyverse library(tidyverse) # import dataset and summarize data &amp;lt;- read.csv(&amp;quot;/stor/home/yl33656/data.csv&amp;quot;) data &amp;lt;- data %&amp;gt;% na.omit() data &amp;lt;- data %&amp;gt;% select(!c(CHAS, ZN, B, INDUS, TAX, AGE, MEDV)) data &amp;lt;- data %&amp;gt;% mutate(NOX.</description>
+    </item>
+    
+  </channel>
+</rss>

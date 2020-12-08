@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Erin Lee</title>
+    <link>/</link>
+    <description>Recent content on Erin Lee</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 07 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>new post</title>
+      <link>/post/2020/12/07/new-post/</link>
+      <pubDate>Mon, 07 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2020/12/07/new-post/</guid>
+      <description>This code is using R
+library(tidyverse) ## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.3.0 ── ## ✓ ggplot2 3.3.2 ✓ purrr 0.3.4 ## ✓ tibble 3.0.3 ✓ dplyr 1.0.1 ## ✓ tidyr 1.1.1 ✓ stringr 1.4.0 ## ✓ readr 1.3.1 ✓ forcats 0.5.0 ## ── Conflicts ──────────────────────────────────────────────── tidyverse_conflicts() ── ## x dplyr::filter() masks stats::filter() ## x dplyr::lag() masks stats::lag() library(reticulate) cars%&amp;gt;%glimpse() ## Rows: 50 ## Columns: 2 ## $ speed &amp;lt;dbl&amp;gt; 4, 4, 7, 7, 8, 9, 10, 10, 10, 11, 11, 12, 12, 12, 12, 13, 13, 1… ## $ dist &amp;lt;dbl&amp;gt; 2, 10, 4, 22, 16, 10, 18, 26, 34, 17, 28, 14, 20, 24, 28, 26, 3… cars%&amp;gt;%select(dist) ## dist ## 1 2 ## 2 10 ## 3 4 ## 4 22 ## 5 16 ## 6 10 ## 7 18 ## 8 26 ## 9 34 ## 10 17 ## 11 28 ## 12 14 ## 13 20 ## 14 24 ## 15 28 ## 16 26 ## 17 34 ## 18 34 ## 19 46 ## 20 26 ## 21 36 ## 22 60 ## 23 80 ## 24 20 ## 25 26 ## 26 54 ## 27 32 ## 28 40 ## 29 32 ## 30 40 ## 31 50 ## 32 42 ## 33 56 ## 34 76 ## 35 84 ## 36 36 ## 37 46 ## 38 68 ## 39 32 ## 40 48 ## 41 52 ## 42 56 ## 43 64 ## 44 66 ## 45 54 ## 46 70 ## 47 92 ## 48 93 ## 49 120 ## 50 85 This code is using python</description>
+    </item>
+    
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/post/2015/07/23/hello-r-markdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2015/07/23/hello-r-markdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.</description>
+    </item>
+    
+    <item>
+      <title>Project1</title>
+      <link>/project/project1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project1/</guid>
+      <description>Ye Rim Lee ,yl33656  0. Introduction  Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.  # import tidyverse library(tidyverse) # import two datasets and glimpse those six &amp;lt;- read.csv(&amp;quot;/stor/home/yl33656/Police_2016.csv&amp;quot;) glimpse(six) ## Rows: 150,500 ## Columns: 13 ## $ IncidntNum &amp;lt;int&amp;gt; 120058272, 120058272, 141059263, 160013662, 160002740, 160… ## $ Category &amp;lt;fct&amp;gt; WEAPON LAWS, WEAPON LAWS, WARRANTS, NON-CRIMINAL, NON-CRIM… ## $ Descript &amp;lt;fct&amp;gt; &amp;quot;POSS OF PROHIBITED WEAPON&amp;quot;, &amp;quot;FIREARM, LOADED, IN VEHICLE,… ## $ DayOfWeek &amp;lt;fct&amp;gt; Friday, Friday, Monday, Tuesday, Friday, Friday, Saturday,… ## $ Date &amp;lt;fct&amp;gt; 01/29/2016 12:00:00 AM, 01/29/2016 12:00:00 AM, 04/25/2016… ## $ Time &amp;lt;fct&amp;gt; 11:00, 11:00, 14:59, 23:50, 00:30, 21:35, 00:04, 01:02, 12… ## $ PdDistrict &amp;lt;fct&amp;gt; SOUTHERN, SOUTHERN, BAYVIEW, TENDERLOIN, MISSION, NORTHERN… ## $ Resolution &amp;lt;fct&amp;gt; &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;ARREST, BOOKED&amp;quot;, &amp;quot;NON… ## $ Address &amp;lt;fct&amp;gt; 800 Block of BRYANT ST, 800 Block of BRYANT ST, KEITH ST /… ## $ X &amp;lt;dbl&amp;gt; -122.</description>
+    </item>
+    
+    <item>
+      <title>Project2</title>
+      <link>/project/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project/project2/</guid>
+      <description>Ye Rim Lee ,yl33656  0. Introduction  Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?  # import tidyverse library(tidyverse) # import dataset and summarize data &amp;lt;- read.csv(&amp;quot;/stor/home/yl33656/data.csv&amp;quot;) data &amp;lt;- data %&amp;gt;% na.omit() data &amp;lt;- data %&amp;gt;% select(!c(CHAS, ZN, B, INDUS, TAX, AGE, MEDV)) data &amp;lt;- data %&amp;gt;% mutate(NOX.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/</guid>
+      <description>  Check out some of my coding projects below:
+ Wrangling &amp;amp; Exploratory Data Analysis
+ Modeling, Inference, Prediction
+  -- </description>
+    </item>
+    
+    <item>
+      <title>Resume</title>
+      <link>/resume/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/resume/</guid>
+      <description>     </description>
+    </item>
+    
+  </channel>
+</rss>

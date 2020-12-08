@@ -1,0 +1,305 @@
+---
+title: "Project2"
+author: "Ye Rim Lee"
+date: "11/21/2020"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, tidy=T, tidy.opts=list(width.cutoff=50), R.options=list(max.print=100,dplyr.print_max=100))
+class_diag<-function(probs,truth){
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+  f1=2*(sens*ppv)/(sens+ppv)
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE){
+    truth<-as.numeric(truth)-1}
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,f1,auc)
+}
+```
+
+## Ye Rim Lee ,yl33656
+
+
+## 0. Introduction
+
+- Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph. What are they measuring? How many observations?
+```{R}
+#import tidyverse 
+library(tidyverse)
+
+#import dataset and summarize
+data <- read.csv("/stor/home/yl33656/data.csv")
+data<-data %>% na.omit()
+data<- data%>% select(!c(CHAS,ZN,B,INDUS,TAX,AGE,MEDV))
+data <- data%>% mutate(NOX.rate=ifelse(data$NOX>=0.55,"1","0"))
+data$crate[data$CRIM<=0.08227] = "very low"
+data$crate[data$CRIM>0.08227 & data$CRIM<=0.26600] = "low"
+data$crate[data$CRIM>0.26600 & data$CRIM<=3.67708] = "high"
+data$crate[data$CRIM>3.67708] = "very high"
+data$crime[data$CRIM>0.26600] ="high"
+data$crime[data$CRIM<=0.26600] ="low"
+summary(data)
+```
+
+*The dataset that I chose concerns housing values in suburbs of Boston. The reason I chose this dataset is that I wanted to do something related to the last project(crime rate in SF). I realized that it would be interesting to see how those variables for housing values in Boston have co-relation to the possibility of crimes. There are 506 rows and 10 columns after removing the NAs. CRIM is per capita crime rate by town. NOX is nitric oxides concentration (parts per 10 million). RM is average number of rooms per dwelling. DIS is weighted distances to five Boston employment centers. RAD is index of accessibility to radial highways. PTRATIO pupil-teacher ratio by town. LSTAT is percent of lower status of the population. crate is a categorical variable that if the crime rate by town is high, very high, low, or very low. NOX.rate is logical variable(1 means high nitrix oxides concentration rate, and 0 means low nitrix oxides concentration rate). Crime is the simplified version of crate, which has just high and low. I added this categorical variables and a logical variable to perform different kinds of tests later on this project.*
+
+## 1. MANOVA
+
+- Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all is unreasonable or doesn’t make sense) show a mean difference across levels of one of your categorical variables (3).
+- If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3),
+- and perform post-hoc t tests to find which groups differ (3).
+- Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3).
+-Briefly discuss MANOVA assumptions and whether or not they are likely to have been met (no need for anything too in-depth) (2).
+
+```{R}
+library(rstatix)
+
+#MANOVA - 1 test
+man1<-manova(cbind(NOX,RM,DIS,RAD,PTRATIO,LSTAT)~crate, data=data)
+summary(man1)
+#one way ANOVA(univariate ANOVAs) - 6 tests
+summary.aov(man1)
+#post-hoc tests - 36 tests
+pairwise.t.test(data$NOX, data$crate, p.adj = "none")
+pairwise.t.test(data$RM, data$crate, p.adj = "none")
+pairwise.t.test(data$DIS, data$crate, p.adj = "none")
+pairwise.t.test(data$RAD, data$crate, p.adj = "none")
+pairwise.t.test(data$PTRATIO, data$crate, p.adj = "none")
+pairwise.t.test(data$LSTAT, data$crate, p.adj = "none")
+#Type I error
+1-(.95)^43
+#bonferroni correction
+alpha = 0.05/43
+alpha
+#MANOVA Assumptions
+group <- data$crate 
+DVs <- data %>% select(!c(crate,CRIM,NOX.rate,crime))
+#Test multivariate normality for each group (null: assumption met)
+sapply(split(DVs,group), mshapiro_test)
+#If any p<.05, stop (assumption violated). If not, test homogeneity of covariance matrices
+```
+
+
+*I performed MANOVA with 6 response variables which are NOX, RM, DIS, RAD, PTRATIO, LASTAT to find if any of those differ by the criminal rate(crate). Overall MANOVA is significant which means all variables differ by criminal rate(crate). Therefore, I performed follow up one-way ANOVA for each variable. I also performed post-hoc tests with those variables. In total, I used 43 hypothesis tests which comprised of 1 MANOVA, 6 ANOVA, and 36 post-hoc tests. Thus the type I error is 0.8898169, and in order to keep the overall type I error rate at 0.05, the Boneferroni adjusted significance level is 0.001162791. Using this adjusted alpha, p-values of RM, PTRATIO, and LSTAT in post-hoc tests turned out not significant, but besides that all of MANOVA, and ANOVA are significant with the adjusted alpha. For the MANOVA Assumptions, multivariate normality for each group is violated due to their significant p-values(p_value<0.05).*
+
+
+## 2. Randomization Test
+
+- Perform some kind of randomization test on your data (that makes sense). The statistic can be anything you want (mean difference, correlation, F-statistic/ANOVA, chi-squared), etc. State null and alternative hypotheses, perform the test, and interpret the results (7).
+- Create a plot visualizing the null distribution and the test statistic (3).
+
+
+```{R}
+set.seed(348)
+#randomization test
+data %>% group_by(NOX.rate) %>% summarize(means = mean(DIS)) %>% summarize(mean_diff = diff(means))
+rand_dist1<-vector()
+for(i in 1:5000){
+new<-data.frame(DIS=sample(data$DIS),NOX.rate=data$NOX.rate)
+rand_dist1[i]<-mean(new[new$NOX.rate==0,]$DIS)-
+mean(new[new$NOX.rate==1,]$DIS)
+}
+
+#plot the randomization test
+{hist(rand_dist1,main="",ylab=""); abline(v = c(-3.021828, 3.021828),col="red")}
+#two tailed p-value test
+mean(rand_dist1 > 3.021828 | rand_dist1 < -3.021828)
+#t-test
+t.test(data = data, DIS ~ NOX.rate)
+```
+
+*I performed randomization test on weighted distances to five Boston employment centers(DIS). The null hypothesis is that mean DIS is the same for high(1) vs. low(0) nitric oxides concentration, and the alternate hypothesis is that mean DIS is different for high(1) vs. low(0) nitric oxides concentration. The randomization test shows that there are significant difference in DIS between high and low nitric oxides concentration because the two tailed pvalue is 0(none of the 5000 mean difference statistics generated under the null hypothesis were outside of the mean difference range). Therefore, I can reject the null hypothesis for the randomization test because the p-value is less than 0.05, which gives the same results as the t-test.*
+
+
+## 3. Linear Regression model
+
+- Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction.
+
+    - Interpret the coefficient estimates (do not discuss significance) (10)
+    - Plot the regression using `ggplot()` using geom_smooth(method="lm"). If your interaction is numeric by numeric, refer to code in the slides to make the plot or check out the `interactions` package, which makes this easier. If you have 3 or more predictors, just chose two of them to plot for convenience. (8)
+    - Check assumptions of linearity, normality, and homoskedasticity either graphically or using a hypothesis test (4)
+    - Regardless, recompute regression results with robust standard errors via `coeftest(..., vcov=vcovHC(...))`. Discuss significance of results, including any changes from before/after robust SEs if applicable. (8)
+    - What proportion of the variation in the outcome does your model explain? (4)
+
+```{R}
+library(stats)
+library(lmtest)
+library(sandwich)
+library(interactions)
+#centering predictor variables
+data$NOX_c<-data$NOX-mean(data$NOX)
+data$LSTAT_c<-data$LSTAT-mean(data$LSTAT)
+#build a linear regression model (interaction between NOC_c and LSTAT_c)
+fit<-lm(CRIM ~ NOX_c*LSTAT_c, data=data)
+summary(fit)
+#visualize interaction/plot the regression 
+interact_plot(fit,NOX_c,LSTAT_c)
+#check assumptions
+resids<-lm(CRIM~NOX_c*LSTAT_c, data=data)$residuals
+fitted<-lm(CRIM~NOX_c*LSTAT_c, data=data)$fitted.values
+plot(fitted,resids); abline(h=0, col='red')
+par(mfrow=c(1,2)); hist(resids); qqnorm(resids); qqline(resids, col='red')
+ks.test(resids, "pnorm", mean=0, sd(resids)) 
+bptest(fit)
+#robust standard errors
+coeftest(fit, vcov = vcovHC(fit))
+#proportion of variation 
+sum((fitted-mean(data$CRIM))^2)/sum((data$CRIM-mean(data$CRIM))^2)
+```
+*The intercept shows that predicted CRIM(per capita crime rate by town) for an average NOX(NO concentration) and average LSTAT(percent of lower status of the population) is 2.89048. NOX_c shows that controlling for LSTAT_c status, for every 1-unit increase in NOX_c, CRIM increases 20.08305 on average. LSTAT_c shows that controlling for NOX_c status, for every 1-unit increase in LSTAT_c, CRIM increases 0.23826. NOX_c:LSTAT_c coefficient is hard to describe because both of the predictor variables are continuous. Therefore, I created a plot that shows the effect of the interaction on crime rate. The plot shows that compared to mean LSTAT, high LSTAT(LSTAT) increases the rate of crime as the NO concentration(NOX) increases.*
+
+*The plot of residuals shows that the regression does not have linear relationship between y and x(linearity failed). Eyeballing histogram of residuals and QQ plot, the regression rejects the null hypothesis which means that the regression is not normally distributed. Also the plot for regression shows that it does not have equal variance of points along regression line, which means it does not meet homoskedaticity. I double checked homeskedasticity with bp-test, and I had to reject the null hypothesis, which means the regression is not homoskedastic. Because the all assumptions for linear regression has been violated, I should use bootstrap standard errors.*
+
+*Computing robust standard errors gives overall similar coefficient estimates and standard errors. However, in general all of the coefficients became less significant(still significant!). For the adjusted regression, the intercept shows that predicted CRIM(per capita crime rate by town) for an average NOX(NO concentration) and average LSTAT(percent of lower status of the population) is 2.890475, and it is significant because its p-value is 1.734e-12(p<0.05). The new NOX_c shows that controlling for LSTAT_c status, for every 1-unit increase in NOX_c, CRIM increases 20.083050 on average, and it is significant because its p-value is 6.861e-07(<0.05). LSTAT_c shows that controlling for NOX_c status, for every 1-unit increase in LSTAT_c, CRIM increases 0.238260, and it is also significant because its p-value is 0.00336(<0.05). NOX_c:LSTAT_c shows that the effect of NOX_c on CRIM(crime rate) is different for different values of LSTAT_c, which is significant because of its p-value(0.02601<.05). The proportion of variation in the response variable explained by the overall model is 0.2400469. It means that 2.4% of variability in CRIM is explained.*
+
+## 4. Linear regression + bootstrap 
+
+- Rerun same regression model (with the interaction), but this time compute bootstrapped standard errors (either by resampling observations or residuals).
+- Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)
+
+```{R}
+#bootstrapped standard errors by re-sampling residuals
+fit2<-lm(CRIM~NOX_c*LSTAT_c, data=data)
+resids<-fit2$residuals 
+fitted<-fit2$fitted.values 
+resid_resamp<-replicate(5000,{
+new_resids<-sample(resids,replace=TRUE) 
+data$new_y<-fitted+new_resids 
+fit2<-lm(new_y~NOX_c*LSTAT_c, data=data) 
+coef(fit2) 
+})
+
+#comparing SE
+resid_resamp%>%t%>%as.data.frame%>%summarize_all(sd)
+coeftest(fit, vcov = vcovHC(fit))
+coeftest(fit)
+```
+*In order of bootstrapped standard errors by re-sampling residuals, the robust standard errors, and the original standard errors, the standard error of NOX_c has changed 3.519888 -> 3.993125 -> 3.45221, the standard error of LSTAT_c has changed 0.05256753 -> 0.080854 -> 0.05213, the SE of NOX_c:LSTAT_c has changed 0.4356942 -> 0.667278 -> 0.43010. Overall, the original SE has the lowest values, and then bootstrapped SE, and for the largest one it was the robust SEs. The p-value has the same trend as the SEs' trend. In conclusion, the most significant coefficients would be from the bootstrapped model, and second would be the original, and the least significant one would be the robust SE model. *
+
+## 5. Logistic regression model
+
+- Fit a logistic regression model predicting a binary variable (if you don’t have one, make/get one) from at least two explanatory variables (interaction not necessary).
+
+    - Interpret coefficient estimates in context (10)
+    - Report a confusion matrix for your logistic regression (2)
+    - Compute and discuss the Accuracy, Sensitivity (TPR), Specificity (TNR), Precision (PPV), and AUC of your model (5)
+    - Using ggplot, make a density plot of the log-odds (logit) colored/grouped by your binary outcome variable (3)
+    - Generate an ROC curve (plot) and calculate AUC (either manually or with a package); interpret (5)
+
+```{R}
+library(stats)
+library(plotROC)
+data<-data%>%mutate(y=ifelse(crime=="high",1,0))
+#logsitic regression 
+fit3<-glm(y ~ NOX+RM, data=data, family="binomial")
+coeftest(fit3)
+#confusion matrix
+probs<-predict(fit3,type="response") 
+table(predict=as.numeric(probs>.5),truth=data$y)%>%addmargins
+#Accuracy
+(218+204)/506
+#specificity
+204/239
+#Sensitivity
+218/253
+#Precision
+204/239
+#AUC
+class_diag(probs, data$y)
+#density plot
+data$logit<-predict(fit3,type="link")
+data%>%ggplot()+geom_density(aes(logit,color=crime,fill=crime), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab("logit (log-odds)")+
+  geom_rug(aes(logit,color=crime))
+#plot roc curve
+ROCplot<-ggplot(data)+geom_roc(aes(d=y,m=probs), n.cuts=0) 
+ROCplot
+calc_auc(ROCplot)
+```
+
+*Controlling average room number per dwelling(RM), every unit increase of NOX(NO concentration) makes the odds of having high crime rate increases by 31.33745. Controlling NOX, every unit increase of RM makes the odds of having crime rate increases by 0.66023. Both of the relationships are significant due to its p-value(2.2e-16<0.05). *
+
+*Using the confusion matrix, we can figure out that Accuracy(overall the proportion of correctly classified samples) is (218+204)/506=0.8339921; Sensitivity(true positive rate = probability of detecting high crime rate if the sample really has the high crime rate) is 218/253 = 0.8616601; Specificity(true negative rate=probability of a high crime rate for the low crime rate samples) is 204/239 = 0.8535565, which means it is very bad at predicting ; Precision(the proportion classified high crime rate which actually are) is 204/239= 0.8535565. Its AUC is considered as 'Good' according to the 'Rules of thumb for AUC'. Using, the function class_diag(), we can calculate AUC which is 0.8535565. From the ROC plot, the computed AUC is 0.9380322. With the result I can say that the probability that a randomly selected house that has high crime rate has a higher predicted probability than a randomly selected sample that has low crime rate. The value of AUC is considered as 'great' at predicting if the criminal rate is high or low according to the Rules of thumb for AUC.*
+
+## 6. Logistic regression model
+
+- Perform a logistic regression predicting the same binary response variable from ALL of the rest of your variables (the more, the better!)
+
+    - Fit model, compute in-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, AUC), and interpret (5)
+    - Perform 10-fold (or repeated random sub-sampling) CV with the same model and report average out-of-sample classification diagnostics (Accuracy, Sensitivity, Specificity, Precision, and AUC); interpret AUC and compare with the in-sample metrics (10)
+    - Perform LASSO on the same model/variables. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., `lambda.1se`). Discuss which variables are retained. (5)
+    - Perform 10-fold CV using only the variables lasso selected: compare model's out-of-sample AUC to that of your logistic regressions above (5)
+    
+```{R}
+#code here
+library(base)
+library(glmnet)
+#fit model, compute class_diag
+fit4<-glm(y ~ NOX+RM+DIS+RAD+PTRATIO+LSTAT, data=data, family="binomial")
+coeftest(fit4)
+probs<-predict(fit4,type="response") 
+class_diag(probs, data$y)
+#10-fold CV
+set.seed(1234)
+k = 10
+dat <- data %>% sample_frac  
+folds <- ntile(1:nrow(dat), n = 10)  
+diags <- NULL
+for (i in 1:k) {
+    train <- dat[folds != i, ]  
+    test <- dat[folds == i, ] 
+    truth <- test$y
+    fit5 <- glm(y ~ NOX+RM+DIS+RAD+PTRATIO+LSTAT, data = train, family = "binomial")
+    probs <- predict(fit5, newdata = test, type = "response")
+    diags <- rbind(diags, class_diag(probs, truth))
+}
+summarize_all(diags, "mean")
+#LASSO
+y1 <- as.matrix(data$y)
+crime_preds <- model.matrix(y ~ NOX+RM+DIS+RAD+PTRATIO+LSTAT, data = data)[, -1]
+cv <- cv.glmnet(crime_preds, y1, family = "binomial")
+lasso_fit <- glmnet(crime_preds, y1, family = "binomial", lambda = cv$lambda.1se)
+coef(lasso_fit)
+#10-fold cv
+k = 10
+dat <- data %>% sample_frac  
+folds <- ntile(1:nrow(dat), n = 10)  
+diags <- NULL
+for (i in 1:k) {
+    train <- dat[folds != i, ]  
+    test <- dat[folds == i, ] 
+    truth <- test$y
+    fit5 <- glm(y ~ NOX+RM+RAD+PTRATIO+LSTAT, data = train, family = "binomial")
+    probs <- predict(fit5, newdata = test, type = "response")
+    diags <- rbind(diags, class_diag(probs, truth))
+}
+summarize_all(diags, "mean")
+```
+
+*After fitting a model, I computed in sample classification diagnostics(Accuracy = 0.8853755, Sensitivity = 0.8379447, Specificity = 0.9328063, precision = 0.9257642, and AUC = 0.9596307). The original  model has 'great' level of AUC. After 10-fold CV, I computed out of sample classification diagnostics(Accuracy = 0.8654902, Sensitivity = 0.8365009, Specificity = 0.8913777, precision = 0.8916097, and AUC = 0.9521892). Comparing the in sample model with the out of sample model, because in sample model has higher AUC than that of the out of sample model, in sample model is better at predicting high or low crime rate. I performed LASSO, and found out that except for DIS all the other variables(NOX+RM+RAD+PTRATIO+LSTAT) are non zeros which means they need to be retained. When I ran 10-fold CV with the variables that are retained, compared to the full out of sample model, the accuracy increased from 0.8654902 to 0.8675294, sensibility decreased from 0.8365009 to 0.8337428, specificity increased from 0.8913777 to 0.9011872, precision increased from 0.8916097 to 0.8946755, and lastly AUC increased from 0.9521892 to 0.9558745. In conclusion, the adjusted out of sample model is better at predicting high or low crime rate than the full out of sample model.*
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{R, echo=F}
+## DO NOT DELETE OR MODIFY THIS CHUNK: IT MUST BE PRESENT TO RECEIVE CREDIT FOR THE ASSIGNMENT
+sessionInfo(); Sys.time(); Sys.info()
+```

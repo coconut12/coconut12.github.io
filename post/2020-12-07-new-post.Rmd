@@ -1,0 +1,22 @@
+---
+title: new post
+author: ''
+date: '2020-12-07'
+slug: new-post
+categories: []
+tags: []
+description: ''
+---
+This code is using R
+```{R}
+library(tidyverse)
+library(reticulate)
+cars%>%glimpse()
+cars%>%select(dist)
+```
+This code is using python
+
+```{python}
+
+print(r.cars)
+```

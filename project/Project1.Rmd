@@ -1,0 +1,230 @@
+---
+title: "Project1"
+author: "Ye Rim Lee"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F, tidy=T, tidy.opts=list(width.cutoff=50), R.options=list(max.print=100,dplyr.print_max=100))
+```
+
+## Ye Rim Lee ,yl33656
+
+
+## 0. Introduction
+
+- Write a narrative introductory paragraph or two describing the datasets you have chosen, the variables they contain, how they were acquired, and why they are interesting to you. Expand on potential associations you may expect, if any.
+```{R}
+#import tidyverse 
+library(tidyverse)
+
+#import two datasets and glimpse those
+six <- read.csv("/stor/home/yl33656/Police_2016.csv")
+glimpse(six)
+eight <- read.csv("/stor/home/yl33656/Police_2018.csv")
+eight %>% glimpse()
+```
+
+*I used two dataset which are San Francisco Crime dataset in 2016-2017 and San Francisco Crime dataset in 2018-2019. They both contains information about the crime in Sanfrancisco. For the 2016 dataset, there are 150,500 rows and 13 columns which are mostly related to category of crimes, descriptions of crimes, locations, police districts, and the time. For the 2018 dataset, there are 223,958 rows and 34 columns, which included almost all of the same columns in 2016 data with different names and some redundant columns which had a lot of NAs in the row. Although the person who uploaded the datasets did not specify the method of gathering those data, but seeing those accurate date and time of the report, I logically assume that the data are from the police departments. They are interesting to me because I heard that despite their high income average, they have huge discrepancy between the rich and the poor, which cause a high crime rates. The potential association would be popularity of the different types of crimes in different police districts because they would have different problems in different areas in San Francisco.*
+
+## 1. Joining/Merging
+
+- Join your datasets into one using a `dplyr` join function
+- If you have multiple observations on the joining variable in either dataset, fix this by collapsing via summarize
+- Discuss the process in words, including why you chose the join you did
+- Discuss which cases were dropped, if any, and potential problems with this
+
+```{R}
+#Because both of the datasets have too many rows, I randomly sliced the data for 300 rows each
+#I also removed NA 
+six <- six %>% na.omit() %>% slice_sample(n=300)
+eig <- eight %>% select(2:26) %>%na.omit() %>% slice_sample(n=300)
+
+#rename the column variables of eig same as six in order to use full_join easier
+eig<-eig %>% rename("IncidntNum"="Incident.Number","Category"="Incident.Category","Descript"="Incident.Description","DayOfWeek"="Incident.Day.of.Week","Date"="Report.Datetime","PdDistrict"= "Police.District","Resolution"="Resolution", "X"="Longitude","Y"="Latitude","Location"="point")
+six$Date <- as.Date(six$Date,"%m/%d/%Y")
+eig$Date<-as.Date(eig$Date,"%Y/%m/%d %H:%M:%S")
+
+#full_join of six and eig in order to lessen the amount of data loss.
+#select the columns that are relevant 
+mergedat<-six %>% full_join(eig) %>% select(IncidntNum, Category, Descript, DayOfWeek, Date, PdDistrict, Resolution, X, Y, Location)
+
+#instead of x and y, I changed those into more understandable variable names.
+mergedat <- mergedat %>% rename("long"="X", "lat"="Y")
+
+#separate year, month, and date in order to get more numeric columns
+mergedat<-mergedat %>% separate("Date",into = c("year","month","date"))
+mergedat$year<-as.numeric(mergedat$year)
+mergedat$date<-as.numeric(mergedat$date)
+mergedat$month<-as.numeric(mergedat$month)
+
+#glimpse the final merged data
+glimpse(mergedat)
+
+```
+
+
+*I used a full join in order to minimize the loss of data. There were originally over 100,000 rows in each dataset and 13 columns for 2016 data, and 34 columns for the 2018 data. However, I realized there are lots of unnecessary columns in 2018 dataset which were not matching with 2016 dataset. Therefore, I decided to drop some columns using `select()`. By dropping some datasets, the potential problems would be the loss of unique columns by each dataset. I also dicided to randomly choose 300 rows from each data because it took too long to print out outputs when I had the original data, but I made sure choosing the rows ramdomly to see more accurate results.*
+
+
+## 2. Tidying: Rearranging Wide/Long
+
+- Tidy the datasets (using the `tidyr` functions `pivot_longer`/`gather` and/or `pivot_wider`/`spread`) 
+- If you data sets are already tidy, be sure to use those functions somewhere else in your project
+- Document the process (describe in words what was done per the instructions)
+
+
+```{R}
+#the data is already tidy, therefore, I created a new dataset that has a row telling you if the crime is resolved or not
+yes<-mergedat %>% filter(str_detect(Resolution, "ARREST")| str_detect(Resolution,"NONE")) %>% mutate(arrest="yes")
+no<-mergedat %>% filter(str_detect(Resolution,"UNFOUNDED")|str_detect(Resolution,"ACTIVE")) %>% mutate(arrest="no")
+
+
+#full join yes and no datasets
+yes_no <- yes%>%full_join(no)
+
+#Using pivot wider we can see yes and no values in a separate column
+yes_no<-yes_no %>%pivot_wider(names_from = "arrest",values_from=c("IncidntNum"))
+yes_no%>% select(yes,no)%>% summarize_all(n_distinct)
+
+```
+
+*Since my datasets are already tidy, I generated a new dataset 'yes_no' which has a categorical row which tells if the criminal is arrested or not. I used `pivot_wider` in order to see yes and no response in the separate columns. From the new dataset `yes_no`, we can observe that there are 391 crime cases that are resolved and 207 crime cases are not resolved. *
+
+## 3. Wrangling
+
+- Use all six core `dplyr` functions in the service of generating summary statistics (18 pts)
+    - Use mutate at least once to generate a variable that is a function of at least one other variable
+
+- Compute at least 10 summary statistics for using summarize and summarize with group_by (18 pts)
+    - Use at least 5 unique functions inside of summarize (e.g., mean, sd)
+    - At least 2 of these should group by a categorical variable. Create one by dichotomizing a numeric if necessary
+    - If applicable, at least 1 of these should group by two categorical variables
+    - Strongly encouraged to create a correlation matrix with `cor()` on your numeric variables
+
+- Summarize/discuss all results in no more than two paragraphs (4 pts)
+
+```{R}
+#Using mutate, I added columns that tells the season of the year
+mergedat<-mergedat %>%mutate(season= ifelse(month %in% c(3:5),"spring",ifelse(month %in% c(6:8),"summer",ifelse(month %in% c(9:11),"fall",ifelse(month %in% c(12,1,2),"winter","NA")))))
+mergedat %>% select(month,season)%>%table()
+
+#Capitalize the character values in Category, Descript, PdDistrict, and Resolution in order to accurately find the distinct variables
+mergedat<-mergedat %>%mutate(Category=toupper(Category),Descript=toupper(Descript),PdDistrict=toupper(PdDistrict),Resolution=toupper(Resolution))
+
+#Group by the Police District so that we can see which district has the most crimes
+mergedat %>% group_by(PdDistrict) %>% summarize_all(n_distinct) %>% arrange(desc(IncidntNum))
+
+#Group by the Category of the crime to see which category of crime is the most common.
+mergedat %>% group_by(Category) %>% summarize_all(n_distinct) %>% arrange(desc(IncidntNum))
+category<-mergedat %>% group_by(Category) %>% summarize_all(n_distinct) %>% arrange(desc(IncidntNum))
+
+#Group by Police District and Day of Week to see the maximum, minimum, variance, average, standard deviation, and median of number of crimes. 
+mergedat %>% group_by(PdDistrict, DayOfWeek) %>% summarize_all(n_distinct)%>% summarize( max = max(IncidntNum), min = min(IncidntNum), var=var(IncidntNum), avg=mean(IncidntNum),sd=sd(IncidntNum),median= median(IncidntNum))%>%arrange(desc(PdDistrict))
+
+#Count the number of crimes that the criminals are arrested.
+mergedat %>% filter(str_detect(Resolution, "ARREST")) %>% summarize(n())
+  
+#Count the number of crimes that the criminals are not arrested or lost. 
+mergedat %>% filter(str_detect(Resolution,"ACTIVE") | str_detect(Resolution,"UNFOUNDED"))%>% summarize(n())
+
+```
+*For the first output, I used `mutate()` in order to group the month column into four seasons. The result shows that there is the least crime during the fall. The second part was another use of `mutate()` function in order to capitalize all character values in Category, Descript, PdDistrict, and Resolution which helped me to solve the problem that was caused because dataset in 2016 was capitalized and dataset in 2018 was not capitalized. It was helpful to see the distinct variables of those columns. For the second output, I used `group_by` for the Police District so that we can see which district has the most crimes. To enhance the visibility, I used `arranged()`. The result shows that the Southern Police District had the most incidents and categories of crime. Similarly, for the third output, I grouped by the Category of the crime to see which category of crime is the most common. The result shows that the most common category was larceny/theft.*
+
+*For the fourth outcome, I grouped by police district and day of week in order to see maximum, minimum, variance, average, standard deviation, and median of the number of incidents within the groups. The result shows that in the Southern police district the range between minimum and maximum is the greatest, which is shown by their highest number of variance, and standard deviation. For the last output, I counted the number of cases that the criminals are arrested and the cases are resolved, and I also counted the number of cases that the criminals are not arrested yet or unfounded. The result shows that surprisingly there are more unresolved cases than resolved ones. *
+
+## 4. Visualizing
+
+- Create a correlation heatmap of your numeric variables
+
+- Create two effective, polished plots with ggplot
+
+    - Each plot should map 3+ variables to aesthetics 
+    - Each plot should have a title and clean labeling for all mappings
+    - Change at least one default theme element and color for at least one mapping per plot
+    - For at least one plot, add more tick marks (x, y, or both) than are given by default
+    - For at least one plot, use the stat="summary" function
+    - Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent
+
+```{R}
+#heatmap
+#selects the numeric variables and then selects those which are somewhat relevant.
+cormat <- category %>% select_if(is.numeric)%>%select(-long,-lat,-year,-month,-date,-Resolution) %>% cor(use="pair")
+tidycor <- cormat %>% as.data.frame %>% rownames_to_column("var1") %>%
+pivot_longer(-1,names_to="var2",values_to="correlation")
+
+#visualize the correlations(plot the heatmap)
+tidycor%>%ggplot(aes(var1,var2,fill=correlation))+ geom_tile()+ scale_fill_gradient2(low="red",mid="blue",high="orange")+ geom_text(aes(label=round(correlation,2)),color = "black", size = 4)+theme(axis.text.x = element_text(angle = 90, hjust=1))+coord_fixed() 
+
+##ggplot1
+#Using longitude and latitude columns, we can generally locate which Police Districts are located.
+mergedat %>% ggplot()+geom_point(aes(x=long, y=lat,color=PdDistrict,shape=season))+ ggtitle("Scatterplot of Police Districts")+labs(color="Police District")+ ylab("Latitude")+xlab("Longitude") 
+
+#ggplot2
+#Group by Police District and day of week in order to see general trends of crimes reported each day in a week in different police districts.
+mergedat %>% group_by(PdDistrict, DayOfWeek) %>% summarize_all(n_distinct)%>% ggplot(aes(x=DayOfWeek,y=IncidntNum,fill=DayOfWeek))+geom_bar(aes(y=IncidntNum),stat="summary",fun=mean)+facet_wrap(~PdDistrict)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+ylab("Number of incidents")+ggtitle("Police District Daily Trend")
+
+```
+*First of all for the dataset, I used category which I grouped by category from the original dataset(mergedat) in order to get more numerical columns. Then, I made a correlation heatmap of my numeric variables such as the number of Day of week, Descripions, Incident IDs, Locations, and Police District. Although most of my numeric datasets had high correlation to each other, the one thing noticeable was that in terms of group by crime categories, if there are more cases(the number of incident cases) there are higher distinct locations. Moreover, the number of seasons was the least correlated to other numerical variables.*
+
+*The first plot shows the relationship between the Police districts and the location of the case that was reported with longitude and latitude. I also included a season factor to see in which season the crime occurred. I used longitude as x, latitude as y, police district as a color, and season as shape. The plot was useful to see that generally crime cases reported in the same police district is clustered in similar region. However, there were some exceptions as well. For example, as you can see in the plot, a case in Ingleside region was taken care by northern police district.*
+
+*The second plot shows the number of incidents in different police district for each day of week. I used the three variables such as police districts as facet wrap, number of incidents as y, day of week as both color and x. The reason I used day of week twice is because there was a limited space for x variables, and I wanted to make my plot look neat. The plot suggests that besides police districts that are out of San Francisco, park district normally has the least criminal cases, whereas Southern district has the most criminal cases. In terms of the day of week, it is hard to see clear relationship between day of week and number of incidents.*
+
+## 5. Dimensionality Reduction
+
+- Either k-means/PAM clustering or PCA (inclusive "or") should be performed on at least three numeric variables in your dataset
+
+    - All relevant steps discussed in class 
+    - A visualization of the clusters or the first few principal components (using ggplot2)
+    - Supporting paragraph or two describing results found 
+
+
+```{R}
+
+library(cluster)
+library(plotly)
+
+#Finding the best number of cluster for my dataset
+pam_dat <-category %>% select(IncidntNum,Descript,Location)
+sil_width <-vector()
+for(i in 2:10){
+  pam_fit <- pam(pam_dat,k=i)
+  sil_width[i] <- pam_fit$silinfo$avg.width
+}
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name="k",breaks = 1:10)
+
+#clustering
+final <- category %>% select(IncidntNum,Descript,Location) %>% scale %>% as.data.frame
+pam2 <- final %>% pam(2)
+pam2$silinfo$avg.width
+plot(pam2,which=2)
+final <- final %>% mutate(cluster=as.factor(pam2$clustering))
+
+#2-D clustering(number of incidents vs descriptions)
+ggplot(final, aes(x=IncidntNum ,y=Descript,color=cluster))+geom_point()+ggtitle("Clustering Analysis")+xlab("Number of incidents")+ylab("Descriptions")
+
+#3-D clustering
+final %>% plot_ly(x=~IncidntNum,y=~Descript,z=~Location,color=~cluster,type="scatter3d",mode="markers")
+
+```
+
+*First of all, I used goodness-of-fit in order to find the best number of clusters for my dataset. The result shows that when it has 2 clusters, it has the highest silhouette width. When I coded silhouette plot of PAM, I got 0.79 for the average silhouette width, which means a strong structure has been found. *
+
+*For the visualization of the clusters, I visualized two variables(number of incidents and description), but in cluster based on three variables which are number of incidents, descriptions, locations. The plot shows that although cluster 2(blue) shows a pretty positively correlated relationship between the number of incidents and the number of descriptions, cluster 1(red) doesn't show clear relationship between those two variables. For the second visualization, I included all three variables. Both Descriptions vs Location, and the number of incidents vs Description had strong positive correlations for cluster 2, but they did not have strong correlation for the cluster 1. However, for Location vs number of incidents, both of the clusters had strong positively correlated relationship.*
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{R, echo=F}
+## DO NOT DELETE OR MODIFY THIS CHUNK: IT MUST BE PRESENT TO RECEIVE CREDIT FOR THE ASSIGNMENT
+sessionInfo(); Sys.time(); Sys.info()
+```

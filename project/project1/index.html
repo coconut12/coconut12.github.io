@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Erin Lee" />
     <meta name="description" content="Welcome to my website">
-    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico">
     <title>Project1</title>
     <meta name="generator" content="Hugo 0.79.0" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/main.css" />
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
     
@@ -28,7 +28,7 @@
       <nav class="navbar navbar-default">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <a class="navbar-brand" href="../../"><i class="fa fa-home"></i></a>
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -39,11 +39,11 @@
       <ul class="nav navbar-nav navbar-right">
       
         
-        <li><a href="/post/">BLOG</a></li>
+        <li><a href="../../post/">BLOG</a></li>
         
-        <li><a href="/projects/">PROJECTS</a></li>
+        <li><a href="../../projects/">PROJECTS</a></li>
         
-        <li><a href="/resume/">RESUME</a></li>
+        <li><a href="../../resume/">RESUME</a></li>
         
       
       </ul>
@@ -54,7 +54,7 @@
       <div class="container">
         <div class="blog-post">
           <h3>
-            <strong><a href="/project/project1/">Project1</a></strong>
+            <strong><a href="../../project/project1/">Project1</a></strong>
           </h3>
         </div>
  
@@ -70,16 +70,16 @@
           <div class="panel-body">
             <div class="blogpost">
               
-<link href="/rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
-<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
-<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
-<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
-<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
-<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
-<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
-<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+<link href="../../rmarkdown-libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/anchor-sections/anchor-sections.js"></script>
+<script src="../../rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="../../rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="../../rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="../../rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="../../rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="../../rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="../../rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
 
 
 <div id="ye-rim-lee-yl33656" class="section level2">
@@ -403,7 +403,7 @@ tidycor %&gt;% ggplot(aes(var1, var2, fill = correlation)) +
     mid = &quot;blue&quot;, high = &quot;orange&quot;) + geom_text(aes(label = round(correlation, 
     2)), color = &quot;black&quot;, size = 4) + theme(axis.text.x = element_text(angle = 90, 
     hjust = 1)) + coord_fixed()</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>## ggplot1 Using longitude and latitude columns, we
 ## can generally locate which Police Districts are
 ## located.
@@ -411,7 +411,7 @@ mergedat %&gt;% ggplot() + geom_point(aes(x = long, y = lat,
     color = PdDistrict, shape = season)) + ggtitle(&quot;Scatterplot of Police Districts&quot;) + 
     labs(color = &quot;Police District&quot;) + ylab(&quot;Latitude&quot;) + 
     xlab(&quot;Longitude&quot;)</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># ggplot2 Group by Police District and day of week
 # in order to see general trends of crimes reported
 # each day in a week in different police districts.
@@ -421,7 +421,7 @@ mergedat %&gt;% group_by(PdDistrict, DayOfWeek) %&gt;% summarize_all(n_distinct)
         fun = mean) + facet_wrap(~PdDistrict) + theme(axis.title.x = element_blank(), 
     axis.text.x = element_blank(), axis.ticks.x = element_blank()) + 
     ylab(&quot;Number of incidents&quot;) + ggtitle(&quot;Police District Daily Trend&quot;)</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /> <em>First of all for the dataset, I used category which I grouped by category from the original dataset(mergedat) in order to get more numerical columns. Then, I made a correlation heatmap of my numeric variables such as the number of Day of week, Descripions, Incident IDs, Locations, and Police District. Although most of my numeric datasets had high correlation to each other, the one thing noticeable was that in terms of group by crime categories, if there are more cases(the number of incident cases) there are higher distinct locations. Moreover, the number of seasons was the least correlated to other numerical variables.</em></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /> <em>First of all for the dataset, I used category which I grouped by category from the original dataset(mergedat) in order to get more numerical columns. Then, I made a correlation heatmap of my numeric variables such as the number of Day of week, Descripions, Incident IDs, Locations, and Police District. Although most of my numeric datasets had high correlation to each other, the one thing noticeable was that in terms of group by crime categories, if there are more cases(the number of incident cases) there are higher distinct locations. Moreover, the number of seasons was the least correlated to other numerical variables.</em></p>
 <p><em>The first plot shows the relationship between the Police districts and the location of the case that was reported with longitude and latitude. I also included a season factor to see in which season the crime occurred. I used longitude as x, latitude as y, police district as a color, and season as shape. The plot was useful to see that generally crime cases reported in the same police district is clustered in similar region. However, there were some exceptions as well. For example, as you can see in the plot, a case in Ingleside region was taken care by northern police district.</em></p>
 <p><em>The second plot shows the number of incidents in different police district for each day of week. I used the three variables such as police districts as facet wrap, number of incidents as y, day of week as both color and x. The reason I used day of week twice is because there was a limited space for x variables, and I wanted to make my plot look neat. The plot suggests that besides police districts that are out of San Francisco, park district normally has the least criminal cases, whereas Southern district has the most criminal cases. In terms of the day of week, it is hard to see clear relationship between day of week and number of incidents.</em></p>
 </div>
@@ -448,7 +448,7 @@ for (i in 2:10) {
 }
 ggplot() + geom_line(aes(x = 1:10, y = sil_width)) + 
     scale_x_continuous(name = &quot;k&quot;, breaks = 1:10)</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># clustering
 final &lt;- category %&gt;% select(IncidntNum, Descript, 
     Location) %&gt;% scale %&gt;% as.data.frame
@@ -456,7 +456,7 @@ pam2 &lt;- final %&gt;% pam(2)
 pam2$silinfo$avg.width</code></pre>
 <pre><code>## [1] 0.7090269</code></pre>
 <pre class="r"><code>plot(pam2, which = 2)</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>final &lt;- final %&gt;% mutate(cluster = as.factor(pam2$clustering))
 
 # 2-D clustering(number of incidents vs
@@ -464,7 +464,7 @@ pam2$silinfo$avg.width</code></pre>
 ggplot(final, aes(x = IncidntNum, y = Descript, color = cluster)) + 
     geom_point() + ggtitle(&quot;Clustering Analysis&quot;) + 
     xlab(&quot;Number of incidents&quot;) + ylab(&quot;Descriptions&quot;)</code></pre>
-<p><img src="/project/Project1_files/figure-html/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="../../project/Project1_files/figure-html/unnamed-chunk-6-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># 3-D clustering
 final %&gt;% plot_ly(x = ~IncidntNum, y = ~Descript, z = ~Location, 
     color = ~cluster, type = &quot;scatter3d&quot;, mode = &quot;markers&quot;)</code></pre>
@@ -579,10 +579,10 @@ final %&gt;% plot_ly(x = ~IncidntNum, y = ~Descript, z = ~Location,
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="/js/docs.min.js"></script>
-<script src="/js/main.js"></script>
+<script src="../../js/docs.min.js"></script>
+<script src="../../js/main.js"></script>
 
-<script src="/js/ie10-viewport-bug-workaround.js"></script>
+<script src="../../js/ie10-viewport-bug-workaround.js"></script>
 
 
     

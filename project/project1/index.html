@@ -198,18 +198,18 @@ mergedat$month &lt;- as.numeric(mergedat$month)
 glimpse(mergedat)</code></pre>
 <pre><code>## Rows: 300
 ## Columns: 12
-## $ IncidntNum &lt;int&gt; 166074343, 170013583, 160849310, 166044095, 160513521, 160…
-## $ Category   &lt;fct&gt; LARCENY/THEFT, OTHER OFFENSES, WARRANTS, LARCENY/THEFT, TR…
-## $ Descript   &lt;fct&gt; &quot;GRAND THEFT FROM LOCKED AUTO&quot;, &quot;MISCELLANEOUS INVESTIGATI…
-## $ DayOfWeek  &lt;fct&gt; Wednesday, Sunday, Tuesday, Sunday, Friday, Wednesday, Fri…
+## $ IncidntNum &lt;int&gt; 160054462, 166088015, 161016942, 160997163, 160520786, 160…
+## $ Category   &lt;fct&gt; OTHER OFFENSES, NON-CRIMINAL, OTHER OFFENSES, LARCENY/THEF…
+## $ Descript   &lt;fct&gt; &quot;PROBATION VIOLATION&quot;, &quot;LOST PROPERTY&quot;, &quot;INCIDENT ON SCHOO…
+## $ DayOfWeek  &lt;fct&gt; Monday, Sunday, Thursday, Sunday, Saturday, Saturday, Frid…
 ## $ year       &lt;dbl&gt; 2016, 2016, 2016, 2016, 2016, 2016, 2016, 2016, 2016, 2016…
-## $ month      &lt;dbl&gt; 3, 12, 10, 2, 6, 1, 11, 10, 6, 10, 2, 12, 9, 4, 11, 12, 6,…
-## $ date       &lt;dbl&gt; 30, 11, 18, 21, 24, 13, 25, 20, 9, 31, 9, 13, 16, 17, 3, 1…
-## $ PdDistrict &lt;fct&gt; TARAVAL, MISSION, MISSION, CENTRAL, SOUTHERN, PARK, INGLES…
-## $ Resolution &lt;fct&gt; &quot;NONE&quot;, &quot;NONE&quot;, &quot;ARREST, BOOKED&quot;, &quot;NONE&quot;, &quot;NONE&quot;, &quot;ARREST,…
-## $ long       &lt;dbl&gt; -122.4825, -122.4197, -122.4066, -122.3993, -122.4012, -12…
-## $ lat        &lt;dbl&gt; 37.76332, 37.76585, 37.75716, 37.79886, 37.78810, 37.77016…
-## $ Location   &lt;fct&gt; &quot;(37.7633237012278, -122.482480961268)&quot;, &quot;(37.765851097743…</code></pre>
+## $ month      &lt;dbl&gt; 1, 4, 12, 12, 6, 8, 1, 5, 3, 9, 8, 6, 5, 11, 1, 6, 10, 3, …
+## $ date       &lt;dbl&gt; 18, 17, 15, 4, 18, 13, 22, 11, 30, 12, 31, 25, 20, 7, 27, …
+## $ PdDistrict &lt;fct&gt; PARK, NORTHERN, INGLESIDE, INGLESIDE, NORTHERN, SOUTHERN, …
+## $ Resolution &lt;fct&gt; &quot;ARREST, BOOKED&quot;, &quot;NONE&quot;, &quot;NONE&quot;, &quot;NONE&quot;, &quot;NONE&quot;, &quot;NONE&quot;, …
+## $ long       &lt;dbl&gt; -122.4542, -122.4379, -122.4069, -122.4372, -122.4218, -12…
+## $ lat        &lt;dbl&gt; 37.74596, 37.80061, 37.71886, 37.72133, 37.77518, 37.78448…
+## $ Location   &lt;fct&gt; &quot;(37.7459562953856, -122.454239907613)&quot;, &quot;(37.800607533158…</code></pre>
 <p><em>I used a full join in order to minimize the loss of data. There were originally over 100,000 rows in each dataset and 13 columns for 2016 data, and 34 columns for the 2018 data. However, I realized there are lots of unnecessary columns in 2018 dataset which were not matching with 2016 dataset. Therefore, I decided to drop some columns using <code>select()</code>. By dropping some datasets, the potential problems would be the loss of unique columns by each dataset. I also dicided to randomly choose 300 rows from each data because it took too long to print out outputs when I had the original data, but I made sure choosing the rows ramdomly to see more accurate results.</em></p>
 </div>
 <div id="tidying-rearranging-widelong" class="section level2">
@@ -239,7 +239,7 @@ yes_no %&gt;% select(yes, no) %&gt;% summarize_all(n_distinct)</code></pre>
 <pre><code>## # A tibble: 1 x 2
 ##     yes    no
 ##   &lt;int&gt; &lt;int&gt;
-## 1   296     3</code></pre>
+## 1   296     2</code></pre>
 <p><em>Since my datasets are already tidy, I generated a new dataset 'yes_no' which has a categorical row which tells if the criminal is arrested or not. I used <code>pivot_wider</code> in order to see yes and no response in the separate columns. From the new dataset <code>yes_no</code>, we can observe that there are 391 crime cases that are resolved and 207 crime cases are not resolved. </em></p>
 </div>
 <div id="wrangling" class="section level2">
@@ -267,18 +267,18 @@ mergedat &lt;- mergedat %&gt;% mutate(season = ifelse(month %in%
 mergedat %&gt;% select(month, season) %&gt;% table()</code></pre>
 <pre><code>##      season
 ## month fall spring summer winter
-##    1     0      0      0     30
-##    2     0      0      0     17
-##    3     0     25      0      0
-##    4     0     31      0      0
-##    5     0     24      0      0
-##    6     0      0     18      0
-##    7     0      0     17      0
-##    8     0      0     27      0
-##    9    22      0      0      0
-##    10   26      0      0      0
-##    11   28      0      0      0
-##    12    0      0      0     35</code></pre>
+##    1     0      0      0     23
+##    2     0      0      0     20
+##    3     0     28      0      0
+##    4     0     25      0      0
+##    5     0     27      0      0
+##    6     0      0     31      0
+##    7     0      0     27      0
+##    8     0      0     19      0
+##    9    19      0      0      0
+##    10   25      0      0      0
+##    11   26      0      0      0
+##    12    0      0      0     30</code></pre>
 <pre class="r"><code># Capitalize the character values in Category,
 # Descript, PdDistrict, and Resolution in order to
 # accurately find the distinct variables
@@ -293,47 +293,50 @@ mergedat %&gt;% group_by(PdDistrict) %&gt;% summarize_all(n_distinct) %&gt;%
 <pre><code>## # A tibble: 10 x 13
 ##    PdDistrict IncidntNum Category Descript DayOfWeek  year month  date
 ##    &lt;chr&gt;           &lt;int&gt;    &lt;int&gt;    &lt;int&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
-##  1 SOUTHERN           70       18       42         7     1    12    27
-##  2 NORTHERN           43       16       32         7     1    12    27
-##  3 CENTRAL            32       10       22         6     1    11    22
-##  4 MISSION            32       12       22         7     1    11    22
-##  5 BAYVIEW            30        9       23         7     1    11    22
-##  6 TARAVAL            24        8       15         7     1     9    20
-##  7 TENDERLOIN         23       10       19         7     1    10    18
-##  8 INGLESIDE          22       10       18         6     1    10    17
-##  9 PARK               12        6        9         6     1     6    11
-## 10 RICHMOND           12        6        8         6     1     6    11
+##  1 CENTRAL            47       14       29         7     1    12    25
+##  2 SOUTHERN           43       15       25         7     1    12    22
+##  3 MISSION            35       17       29         7     1    12    21
+##  4 NORTHERN           35       10       21         7     1    12    20
+##  5 INGLESIDE          34       14       30         7     1    12    21
+##  6 BAYVIEW            23       12       22         6     1    12    15
+##  7 TARAVAL            23        9       18         7     1    10    15
+##  8 PARK               21       12       19         5     1    11    13
+##  9 RICHMOND           20        7       12         6     1    10    16
+## 10 TENDERLOIN         18       11       17         6     1     9    12
 ## # … with 5 more variables: Resolution &lt;int&gt;, long &lt;int&gt;, lat &lt;int&gt;,
 ## #   Location &lt;int&gt;, season &lt;int&gt;</code></pre>
 <pre class="r"><code># Group by the Category of the crime to see which
 # category of crime is the most common.
 mergedat %&gt;% group_by(Category) %&gt;% summarize_all(n_distinct) %&gt;% 
     arrange(desc(IncidntNum))</code></pre>
-<pre><code>## # A tibble: 22 x 13
+<pre><code>## # A tibble: 25 x 13
 ##    Category IncidntNum Descript DayOfWeek  year month  date PdDistrict
 ##    &lt;chr&gt;         &lt;int&gt;    &lt;int&gt;     &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;      &lt;int&gt;
-##  1 LARCENY…         84       15         7     1    12    30         10
-##  2 NON-CRI…         45       11         7     1    12    24         10
-##  3 OTHER O…         44       17         7     1    12    26         10
-##  4 ASSAULT          26        9         7     1    10    14          9
-##  5 VANDALI…         18        7         7     1    10    14          7
-##  6 SUSPICI…         10        2         6     1     7     8          6
-##  7 VEHICLE…         10        3         6     1     7     7          6
-##  8 DRUG/NA…          9        5         7     1     7     8          5
-##  9 BURGLARY          8        6         6     1     7     8          7
-## 10 ROBBERY           8        5         4     1     5     7          5
-## 11 WARRANTS          8        2         4     1     6     8          5
-## 12 MISSING…          6        3         5     1     4     5          5
-## 13 TRESPASS          6        2         4     1     4     5          4
-## 14 DISORDE…          3        2         2     1     2     3          3
-## 15 FRAUD             3        2         2     1     3     3          2
-## 16 KIDNAPP…          3        2         3     1     2     3          2
-## 17 DRUNKEN…          2        1         2     1     2     2          2
-## 18 FORGERY…          2        2         2     1     2     2          2
-## 19 SEX OFF…          2        2         2     1     2     2          2
-## 20 PROSTIT…          1        1         1     1     1     1          1
-## 21 RECOVER…          1        1         1     1     1     1          1
-## 22 SECONDA…          1        1         1     1     1     1          1
+##  1 LARCENY…         85       14         7     1    12    29         10
+##  2 NON-CRI…         38       10         7     1    12    22          9
+##  3 OTHER O…         38       19         7     1    12    22          9
+##  4 VANDALI…         19        3         6     1    10    18          9
+##  5 ASSAULT          18        9         7     1    10    15          8
+##  6 WARRANTS         14        3         7     1    11    10          9
+##  7 VEHICLE…         13        5         5     1     9    11          8
+##  8 BURGLARY         11        9         5     1     7    10          6
+##  9 SUSPICI…          9        2         6     1     6     6          6
+## 10 DRUG/NA…          7        4         5     1     7     6          5
+## 11 WEAPON …          7        6         5     1     6     5          6
+## 12 MISSING…          6        2         5     1     6     5          4
+## 13 SECONDA…          6        3         3     1     5     6          5
+## 14 DRIVING…          4        1         3     1     2     4          3
+## 15 FRAUD             4        4         3     1     4     4          4
+## 16 ROBBERY           4        2         4     1     4     3          4
+## 17 TRESPASS          4        2         4     1     4     4          4
+## 18 PROSTIT…          3        2         3     1     3     3          3
+## 19 DISORDE…          2        2         2     1     2     1          1
+## 20 FORGERY…          2        2         2     1     2     2          2
+## 21 STOLEN …          2        1         2     1     2     2          2
+## 22 ARSON             1        1         1     1     1     1          1
+## 23 RECOVER…          1        1         1     1     1     1          1
+## 24 RUNAWAY           1        1         1     1     1     1          1
+## 25 SEX OFF…          1        1         1     1     1     1          1
 ## # … with 5 more variables: Resolution &lt;int&gt;, long &lt;int&gt;, lat &lt;int&gt;,
 ## #   Location &lt;int&gt;, season &lt;int&gt;</code></pre>
 <pre class="r"><code>category &lt;- mergedat %&gt;% group_by(Category) %&gt;% summarize_all(n_distinct) %&gt;% 
@@ -348,30 +351,30 @@ mergedat %&gt;% group_by(PdDistrict, DayOfWeek) %&gt;% summarize_all(n_distinct)
         sd = sd(IncidntNum), median = median(IncidntNum)) %&gt;% 
     arrange(desc(PdDistrict))</code></pre>
 <pre><code>## # A tibble: 10 x 7
-##    PdDistrict   max   min    var   avg    sd median
-##    &lt;chr&gt;      &lt;int&gt; &lt;int&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-##  1 TENDERLOIN     7     1  3.57   3.29 1.89     3  
-##  2 TARAVAL        5     1  2.29   3.43 1.51     4  
-##  3 SOUTHERN      18     4 19     10    4.36     9  
-##  4 RICHMOND       5     1  2.4    2    1.55     1.5
-##  5 PARK           3     1  0.8    2    0.894    2  
-##  6 NORTHERN      10     4  3.81   6.14 1.95     6  
-##  7 MISSION       12     1 13.0    4.57 3.60     4  
-##  8 INGLESIDE      6     1  5.07   3.67 2.25     3.5
-##  9 CENTRAL        6     4  0.667  5.33 0.816    5.5
-## 10 BAYVIEW        8     2  4.24   4.29 2.06     4</code></pre>
+##    PdDistrict   max   min   var   avg    sd median
+##    &lt;chr&gt;      &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1 TENDERLOIN     6     1  4     3    2        3  
+##  2 TARAVAL        6     1  2.90  3.29 1.70     3  
+##  3 SOUTHERN      11     3  5.81  6.14 2.41     6  
+##  4 RICHMOND       5     1  2.27  3.33 1.51     3  
+##  5 PARK           5     3  0.7   4.2  0.837    4  
+##  6 NORTHERN       8     2  4     5    2        5  
+##  7 MISSION       12     2 11.7   5    3.42     4  
+##  8 INGLESIDE      8     1  5.81  4.86 2.41     5  
+##  9 CENTRAL       10     2  7.90  6.71 2.81     7  
+## 10 BAYVIEW        8     2  4.97  3.83 2.23     3.5</code></pre>
 <pre class="r"><code># Count the number of crimes that the criminals are
 # arrested.
 mergedat %&gt;% filter(str_detect(Resolution, &quot;ARREST&quot;)) %&gt;% 
     summarize(n())</code></pre>
 <pre><code>##   n()
-## 1  79</code></pre>
+## 1  81</code></pre>
 <pre class="r"><code># Count the number of crimes that the criminals are
 # not arrested or lost.
 mergedat %&gt;% filter(str_detect(Resolution, &quot;ACTIVE&quot;) | 
     str_detect(Resolution, &quot;UNFOUNDED&quot;)) %&gt;% summarize(n())</code></pre>
 <pre><code>##   n()
-## 1   2</code></pre>
+## 1   1</code></pre>
 <p><em>For the first output, I used <code>mutate()</code> in order to group the month column into four seasons. The result shows that there is the least crime during the fall. The second part was another use of <code>mutate()</code> function in order to capitalize all character values in Category, Descript, PdDistrict, and Resolution which helped me to solve the problem that was caused because dataset in 2016 was capitalized and dataset in 2018 was not capitalized. It was helpful to see the distinct variables of those columns. For the second output, I used <code>group_by</code> for the Police District so that we can see which district has the most crimes. To enhance the visibility, I used <code>arranged()</code>. The result shows that the Southern Police District had the most incidents and categories of crime. Similarly, for the third output, I grouped by the Category of the crime to see which category of crime is the most common. The result shows that the most common category was larceny/theft.</em></p>
 <p><em>For the fourth outcome, I grouped by police district and day of week in order to see maximum, minimum, variance, average, standard deviation, and median of the number of incidents within the groups. The result shows that in the Southern police district the range between minimum and maximum is the greatest, which is shown by their highest number of variance, and standard deviation. For the last output, I counted the number of cases that the criminals are arrested and the cases are resolved, and I also counted the number of cases that the criminals are not arrested yet or unfounded. The result shows that surprisingly there are more unresolved cases than resolved ones. </em></p>
 </div>
@@ -453,7 +456,7 @@ final &lt;- category %&gt;% select(IncidntNum, Descript,
     Location) %&gt;% scale %&gt;% as.data.frame
 pam2 &lt;- final %&gt;% pam(2)
 pam2$silinfo$avg.width</code></pre>
-<pre><code>## [1] 0.7408634</code></pre>
+<pre><code>## [1] 0.7027588</code></pre>
 <pre class="r"><code>plot(pam2, which = 2)</code></pre>
 <p><img src="../../project/Project1_files/figure-html/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>final &lt;- final %&gt;% mutate(cluster = as.factor(pam2$clustering))
@@ -468,7 +471,7 @@ ggplot(final, aes(x = IncidntNum, y = Descript, color = cluster)) +
 final %&gt;% plot_ly(x = ~IncidntNum, y = ~Descript, z = ~Location, 
     color = ~cluster, type = &quot;scatter3d&quot;, mode = &quot;markers&quot;)</code></pre>
 <div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"b8024401f7e":["function () ","plotlyVisDat"]},"cur_data":"b8024401f7e","attrs":{"b8024401f7e":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"IncidntNum"},"yaxis":{"title":"Descript"},"zaxis":{"title":"Location"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.49473530440812,1.55773085274005,1.50806407192805,0.61406201731202],"y":[2.27063087424706,1.39807403174164,2.70690929549977,0.961795610488929],"z":[3.46377685722902,1.54181751040937,1.54181751040937,0.658755107816563],"mode":"markers","type":"scatter3d","name":"1","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[0.216727770816007,-0.180606475680006,-0.180606475680006,-0.230273256492008,-0.279940037304009,-0.279940037304009,-0.279940037304009,-0.379273598928013,-0.379273598928013,-0.528273941364018,-0.528273941364018,-0.528273941364018,-0.577940722176019,-0.577940722176019,-0.577940722176019,-0.627607502988021,-0.627607502988021,-0.627607502988021],"y":[0.525517189236219,-0.565178863895556,-0.347039653269201,0.0892387679835089,0.307377978609864,0.0892387679835089,-0.565178863895556,-0.347039653269201,-0.565178863895556,-0.565178863895556,-0.565178863895556,-0.565178863895556,-0.783318074521911,-0.565178863895556,-0.565178863895556,-0.783318074521911,-0.783318074521911,-0.783318074521911],"z":[0.243196330125828,-0.172362447564907,-0.172362447564907,-0.224307294776249,-0.276252141987591,-0.276252141987591,-0.276252141987591,-0.380141836410274,-0.380141836410274,-0.5359763780443,-0.5359763780443,-0.5359763780443,-0.587921225255642,-0.587921225255642,-0.587921225255642,-0.639866072466984,-0.639866072466984,-0.639866072466984],"mode":"markers","type":"scatter3d","name":"2","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"11fb17f13ec0f":["function () ","plotlyVisDat"]},"cur_data":"11fb17f13ec0f","attrs":{"11fb17f13ec0f":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter3d"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"scene":{"xaxis":{"title":"IncidntNum"},"yaxis":{"title":"Descript"},"zaxis":{"title":"Location"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[3.99239056864957,1.4219473258204,1.4219473258204,0.328141690573938],"y":[2.1167650579389,1.23843930775679,3.21467224566655,1.01885787021126],"z":[4.00598669576958,1.3397725887682,1.45086484322659,0.339942298642677],"mode":"markers","type":"scatter3d","name":"1","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[0.382831972336261,0.109380563524646,0.0546902817623229,-0.0546902817623229,-0.164070845286969,-0.273451408811615,-0.273451408811615,-0.328141690573938,-0.328141690573938,-0.437522254098584,-0.437522254098584,-0.437522254098584,-0.437522254098584,-0.492212535860907,-0.546902817623229,-0.546902817623229,-0.546902817623229,-0.601593099385552,-0.601593099385552,-0.601593099385552,-0.601593099385552],"y":[-0.29863075506192,-0.29863075506192,0.140532120029139,1.01885787021126,-0.518212192607449,-0.0790493175163906,0.360113557574668,-0.518212192607449,-0.29863075506192,-0.737793630152979,-0.0790493175163906,-0.518212192607449,-0.518212192607449,-0.518212192607449,-0.518212192607449,-0.518212192607449,-0.737793630152979,-0.737793630152979,-0.737793630152979,-0.737793630152979,-0.737793630152979],"z":[0.395488425871872,0.117757789725895,0.062211662496699,-0.0488805919616921,-0.159972846420083,-0.271065100878474,-0.271065100878474,-0.32661122810767,-0.32661122810767,-0.437703482566061,-0.437703482566061,-0.437703482566061,-0.437703482566061,-0.493249609795257,-0.548795737024452,-0.548795737024452,-0.548795737024452,-0.604341864253648,-0.604341864253648,-0.604341864253648,-0.604341864253648],"mode":"markers","type":"scatter3d","name":"2","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 <p><em>First of all, I used goodness-of-fit in order to find the best number of clusters for my dataset. The result shows that when it has 2 clusters, it has the highest silhouette width. When I coded silhouette plot of PAM, I got 0.79 for the average silhouette width, which means a strong structure has been found. </em></p>
 <p><em>For the visualization of the clusters, I visualized two variables(number of incidents and description), but in cluster based on three variables which are number of incidents, descriptions, locations. The plot shows that although cluster 2(blue) shows a pretty positively correlated relationship between the number of incidents and the number of descriptions, cluster 1(red) doesn't show clear relationship between those two variables. For the second visualization, I included all three variables. Both Descriptions vs Location, and the number of incidents vs Description had strong positive correlations for cluster 2, but they did not have strong correlation for the cluster 1. However, for Location vs number of incidents, both of the clusters had strong positively correlated relationship.</em></p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
@@ -513,7 +516,7 @@ final %&gt;% plot_ly(x = ~IncidntNum, y = ~Descript, z = ~Location,
 ## [53] data.table_1.13.0  xml2_1.3.2         reprex_0.3.0       lubridate_1.7.9   
 ## [57] assertthat_0.2.1   rmarkdown_2.5      httr_1.4.2         rstudioapi_0.11   
 ## [61] R6_2.4.1           compiler_3.6.1</code></pre>
-<pre><code>## [1] &quot;2020-12-07 20:43:11 CST&quot;</code></pre>
+<pre><code>## [1] &quot;2020-12-07 20:50:50 CST&quot;</code></pre>
 <pre><code>##                                       sysname 
 ##                                       &quot;Linux&quot; 
 ##                                       release 

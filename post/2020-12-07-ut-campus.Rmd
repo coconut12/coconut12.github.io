@@ -1,0 +1,10 @@
+---
+title: UT campus
+author: Erin Lee
+hidedate: TRUE
+slug: ut-campus
+description: 'This is the picture of ut tower'
+---
+<center>
+<iframe src="/ut_tower.jpg" width="570" height="713" border="0"></iframe>
+</center>
